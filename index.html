@@ -10,7 +10,7 @@
     <h1>Butterfly</h1>
 
     <h2>Ver Posteos</h2>
-    <button onclick="GetData()">Ver Posteos</button>
+    <button onclick="getData()">Ver Posteos</button>
     <ul id="postList"></ul>
 
     <h2>Que estas pensando?</h2>
@@ -21,11 +21,6 @@
         <textarea type="text" id="postBody" required></textarea>
         <button type="submit">Enviar</button>
     </form>
-    <div id="paginationControls">
-        <button onclick="changePage(-1)">Anterior</button>
-        <span id="paginationInfo">Página 1</span>
-        <button onclick="changePage(1)">Siguiente</button>
-    </div>
 
     <script src="script.js"></script>
 </body>

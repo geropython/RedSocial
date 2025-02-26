@@ -1,19 +1,18 @@
-const urlBase = 'https://jsonplaceholder.typicode.com/posts' // esta es la URL con la que interactuaremos
-let posts = [] // iniciamos los posteos como un array vacío
+const urlBase = 'https://jsonplaceholder.typicode.com/posts'; // URL con la que interactuaremos
+let posts = []; // Iniciamos los posteos como un array vacío
 
+// Función para obtener los datos desde la API
 function getData() {
     fetch(urlBase)
         .then(res => res.json())
         .then(data => {
-            posts = data
-            renderPostList()
+            posts = data;
+            renderPostList();
         })
-        .catch(error => console.error('Error al llamar a la API: ', error))
+        .catch(error => console.error('Error al llamar a la API: ', error));
 }
 
-getData()
-
-
+// Función para mostrar los posteos en la lista
 function renderPostList() {
     const postList = document.getElementById('postList');
     postList.innerHTML = '';
@@ -22,34 +21,33 @@ function renderPostList() {
         const listItem = document.createElement('li');
         listItem.classList.add('postItem');
         listItem.innerHTML = `
+            <strong>${post.title}</strong>
+            <p>${post.body}</p>
+            <button onclick="editPost(${post.id})">Editar</button>
+            <button onclick="deletePost(${post.id})">Borrar</button>
 
-        <strong>${post.title}</strong>
-        <p>${post.body}</p>
-        <button onclick="editPost(${post.id})">Editar</button>
-        <button onclick="deletePost(${post.id})">Borrar</button>
-
-        <div id="editForm-${post.id}" class="editForm" style="display:none">
-            <label for="editTitle">Título: </label>
-            <input type="text" id="editTitle-${post.id}" value="${post.title}" required>
-            <label for="editBody"> Comentario: </label>
-            <textarea id="editBody-${post.id}" required>${post.body}</textarea>
-            <button onclick="updatePost(${post.id})"> Actualizar </button>
-        </div>
-        `
-        postList.appendChild(listItem)
-    })
+            <div id="editForm-${post.id}" class="editForm" style="display:none">
+                <label for="editTitle">Título: </label>
+                <input type="text" id="editTitle-${post.id}" value="${post.title}" required>
+                <label for="editBody">Comentario: </label>
+                <textarea id="editBody-${post.id}" required>${post.body}</textarea>
+                <button onclick="updatePost(${post.id})">Actualizar</button>
+            </div>
+        `;
+        postList.appendChild(listItem);
+    });
 }
 
+// Función para enviar los datos del nuevo post
 function postData() {
-
     const postTitleInput = document.getElementById('postTitle');
     const postBodyInput = document.getElementById('postBody');
     const postTitle = postTitleInput.value;
     const postBody = postBodyInput.value;
 
-    if (postTitle.trim() == '' || postBody.trim() == '') {
-        alert('Los campos son obligatorios')
-        return
+    if (postTitle.trim() === '' || postBody.trim() === '') {
+        alert('Los campos son obligatorios');
+        return;
     }
 
     fetch(urlBase, {
@@ -63,21 +61,23 @@ function postData() {
             'Content-type': 'application/json; charset=UTF-8',
         },
     })
-        .then(res => res.json())
-        .then(data => {
-            posts.unshift(data)
-            renderPostList();
-            postTitleInput.value = ''
-            postBodyInput.value = ''
-        })
-        .catch(error => console.error('Error al querer crear posteo: ', error))
+    .then(res => res.json())
+    .then(data => {
+        posts.unshift(data);
+        renderPostList();
+        postTitleInput.value = '';
+        postBodyInput.value = '';
+    })
+    .catch(error => console.error('Error al querer crear posteo: ', error));
 }
 
+// Función para mostrar el formulario de edición de un post
 function editPost(id) {
     const editForm = document.getElementById(`editForm-${id}`);
-    editForm.style.display = (editForm.style.display == 'none') ? 'block' : 'none'
+    editForm.style.display = (editForm.style.display === 'none') ? 'block' : 'none';
 }
 
+// Función para actualizar un post
 function updatePost(id) {
     const editTitle = document.getElementById(`editTitle-${id}`).value;
     const editBody = document.getElementById(`editBody-${id}`).value;
@@ -94,30 +94,31 @@ function updatePost(id) {
             'Content-type': 'application/json; charset=UTF-8',
         },
     })
-        .then(res => res.json())
-        .then(data => {
-            const index = posts.findIndex(post => post.id === data.id)
-            if (index != -1) {
-                posts[index] = data
-            } else {
-                alert('Hubo un error al actualizar la información del posteo')
-            }
-            renderPostList()
-        })
-        .catch(error => console.error('Error al querer actualizar posteo: ', error))
+    .then(res => res.json())
+    .then(data => {
+        const index = posts.findIndex(post => post.id === data.id);
+        if (index !== -1) {
+            posts[index] = data;
+        } else {
+            alert('Hubo un error al actualizar la información del posteo');
+        }
+        renderPostList();
+    })
+    .catch(error => console.error('Error al querer actualizar posteo: ', error));
 }
 
+// Función para borrar un post
 function deletePost(id) {
     fetch(`${urlBase}/${id}`, {
         method: 'DELETE',
     })
     .then(res => {
-        if(res.ok){
-            posts = posts.filter(post => post.id != id)
+        if (res.ok) {
+            posts = posts.filter(post => post.id !== id);
             renderPostList();
-        } else{
-            alert('Hubo un error y no se pudo eliminar el posteo')
+        } else {
+            alert('Hubo un error y no se pudo eliminar el posteo');
         }
     })
-    .catch(error => console.error('Hubo un error: ', error))
+    .catch(error => console.error('Hubo un error: ', error));
 }
